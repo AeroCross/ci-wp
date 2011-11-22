@@ -23,6 +23,7 @@ Just copy the __wp.php__ file into application/models and load it into your cont
 Then you can just use it as a normal Codeigniter model, passing the objects to (or from) the controllers:
 
 ```php
+<?php
 	$data[posts] = $this->wp->getLatestPosts(5);
 	$this->load->view('blog/posts', $data);
 
