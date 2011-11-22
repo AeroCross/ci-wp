@@ -24,7 +24,7 @@ Then you can just use it as a normal Codeigniter model, passing the objects to (
 
 ```php
 <?php
-	$data[posts] = $this->wp->getLatestPosts(5);
+	$data['posts'] = $this->wp->getLatestPosts(5);
 	$this->load->view('blog/posts', $data);
 
 	// and then in your view...
@@ -32,9 +32,9 @@ Then you can just use it as a normal Codeigniter model, passing the objects to (
 	foreach($posts->result() as $post): ?>
 	
 	<h1><?php echo anchor($post->guid, $post->post_title); ?></h1>
-	<p><?php echo $post->post_excerpt; ?>
+	<p><?php echo $post->post_excerpt; ?></p>
 	
-	<p class="post_meta">	<?php echo $post->post_date; ?>
+	<p class="post_meta">	<?php echo $post->post_date; ?></p>
 
 	<?php endforeach; ?>
 ```
