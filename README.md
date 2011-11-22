@@ -1,6 +1,6 @@
 # ci-wp
 
-Small Codeigniter model that serves as an interface for Wordpress. It performs basic operations such as getting an users information, getting the latest posts or retrieving comments or categories.
+Small and simple Codeigniter model that serves as an interface for Wordpress. It performs basic operations such as getting an users information, getting the latest posts or retrieving comments or categories.
 
 ### Requirements
 
@@ -14,12 +14,39 @@ It might be backwards compatible with previous versions of Wordpress and Codeign
 1. Add full CRUD functionality
 2. Add getComments, getPage, and getTags
 
-# Instructions:
+### Instructions:
 
 Just copy the __wp.php__ file into application/models and load it into your controller:
 
 		$this->load->model('wp.php');
 
+Then you can just use it as a normal Codeigniter model, passing the objects to (or from) the controllers:
+
+```php
+	$data[posts] = $this->wp->getLatestPosts(5);
+	$this->load->view('blog/posts', $data);
+
+	// and then in your view...
+	
+	foreach($posts->result() as $post): ?>
+	
+	<h1><?php echo anchor($post->guid, $post->post_title); ?></h1>
+	<p><?php echo $post->post_excerpt; ?>
+	
+	<p class="post_meta">	<?php echo $post->post_date; ?>
+
+	<?php endforeach; ?>
+```
+
 You can also auto-load it editing the appropiate variable inside autoload.php.
 
 If you don't have the __WP\_DATABASE__ constant defined in your __config/constants.php__ file, then you should substitute the __$cdb__ variable with the name of your _database group_ contaning the connection info of your Wordpress installation.
+
+#### Curent methods (as of 21/11/2011):
+
+- getLatestPosts
+- getPost
+- getTotalComments
+- getPostMeta
+- getCategories
+- getUserData
