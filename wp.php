@@ -1,25 +1,24 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-/*
- * class Wp - Common interface with Wordpress.
- *
- * This class adds interaction to the website and a Wordpress database.
- * Contains common operations such as fetch posts, comments, and the modification of such.
- *.
- * This library shouldn't have any dependencies other than a correctly formed Wordpress database - not even the actual Wordpress installation.
- *
- * @author Mario Cuba <mario@mariocuba.net>
- * @since 28/09/2011
- *
- */
- 
-class Wp extends CI_Model {
-	
-	private $cdb = WP_DATABASE; // current database
+/**
+* WordPress model for Codeigniter
+*
+* This class adds interaction to the website and a WordPress database.
+* Contains common operations such as fetch posts, comments, and the modification of such.
+*
+* This library shouldn't have any dependencies other than a correctly formed WordPress database - not even the actual WordPress installation.
+*
+* @author	Mario Cuba <mario@mariocuba.net>
+* @see		http://mariocuba.net, http://github.com/AeroCross
+*/
+class Wp extends CI_Model {	
+	// the name of the WordPress database to use
+	private $cdb = WP_DATABASE;
 	
 	function __construct() {
 		parent::__construct();
 		
+		// load the database
 		$this->cdb = $this->load->database($this->cdb, TRUE);
 	}
 	
