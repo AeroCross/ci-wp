@@ -54,8 +54,7 @@ class Wp extends CI_Model {
  	* @return	object	- a database object with the post, FALSE otherwise
 	* @access	public
  	*/
-	
-	function getPost($id, $fields = array('ID', 'post_title', 'post_content', 'post_date', 'guid', 'post_author')) {
+	public function getPost($id, $fields = array('ID', 'post_title', 'post_content', 'post_date', 'guid', 'post_author')) {
 		$this->cdb
 		->select($fields)
 		->where('ID', $id)
@@ -84,8 +83,7 @@ class Wp extends CI_Model {
 	*
 	* @TODO:	check if the post doesn't exists so it returns a correct value
  	*/
- 	
-	function getTotalComments($id) {
+	public function getTotalComments($id) {
 		$this->cdb
 		->select('comment_ID')
 		->from('comments')
@@ -104,7 +102,6 @@ class Wp extends CI_Model {
  	* @param	int		- the post to fetch the meta info
  	* @return	object	- a database object with the meta post.
  	*/
- 	
 	function getPostMeta($key, $post) {
 		$this->cdb
 		->select('meta_value')
@@ -129,8 +126,7 @@ class Wp extends CI_Model {
  	*
  	* @TODO: Code an easier way to order the result set.
  	*/
- 	
-	function getCategories($order = 'terms.term_id') {
+	public function getCategories($order = 'terms.term_id') {
 		$this->cdb
 		->select('name', 'slug')
 		->from('terms')
@@ -154,8 +150,7 @@ class Wp extends CI_Model {
  	* @param array		- the database fields to fetch
  	* @return object	- a database object with the user information, FALSE otherwise
  	*/
- 	
-	function getUserData($id, $fields = array('user_login', 'user_nicename', 'user_email', 'display_name', 'user_url')) {
+	public function getUserData($id, $fields = array('user_login', 'user_nicename', 'user_email', 'display_name', 'user_url')) {
 		$this->cdb
 		->select($fields)
 		->where('ID', $id)
