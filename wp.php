@@ -22,24 +22,15 @@ class Wp extends CI_Model {
 		$this->cdb = $this->load->database($this->cdb, TRUE);
 	}
 	
-	/*
-	 * method getLatestPosts($amount, [$fields]) - fetches the last $amount posts from Wordpress.
-	 *
-	 * Fetches the last $amount posts from Wordpress, with the $fields data.
-	 *
-	 * @param int[$amount] - the number of posts to fetch.
-	 * @param array[$fields] - the database fields to fetch. Must be named correctly after Wordpress-based databases.  
-	 *
-	 * @return object - a Codeigniter MySQL Object containing the $fields data. FALSE if there are no records.
-	 * @author Mario Cuba <mario@mariocuba.net>
-	 *
-	 * @since 23/09/2011
-	 *
-	 */
-	 
-	function getLatestPosts($amount, $fields = array('ID', 'post_title', 'post_date', 'guid')) {
-		$fields = implode(', ', $fields);
-		
+	/**
+	* Get the latest posts.
+	*
+	* @param	int		- the number of posts to fetch
+	* @param	array	- the database fields to fetch. Must be named correctly after WordPress-based databases
+	* @return	object	- a Codeigniter database object containing the $fields data, FALSE if there are no records
+	* @access	public
+	*/ 
+	public function getLatestPosts($amount, $fields = array('ID', 'post_title', 'post_date', 'guid')) {		
 		$this->cdb
 		->select($fields)
 		->where('post_type', 'post')
