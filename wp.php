@@ -12,7 +12,6 @@
 * @see		http://mariocuba.net, http://github.com/AeroCross
 */
 class Wp extends CI_Model {	
-	
 	// the name of the WordPress database to use
 	private $cdb = WP_DATABASE;
 	private $postFields;
@@ -92,6 +91,7 @@ class Wp extends CI_Model {
 		
 		return $this->cdb->get()->num_rows();
 	}
+
 	
 	/**
  	* Gets the list of categories.
