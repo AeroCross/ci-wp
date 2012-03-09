@@ -12,68 +12,69 @@
 * @see		http://mariocuba.net, http://github.com/AeroCross
 */
 class Wp extends CI_Model {	
+	
 	// the name of the WordPress database to use
 	private $cdb = WP_DATABASE;
+	private $postFields;
 	
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		
-		// load the database
-		$this->cdb = $this->load->database($this->cdb, TRUE);
+		$this->cdb 			= $this->load->database($this->cdb, TRUE);		
+		$this->postFields 	= array(
+				'id', 
+				'guid',
+				'post_title',
+				'post_content',
+				'post_excerpt'
+			);
+
 	}
-	
-	/**
-	* Get the latest posts.
-	*
-	* @param	int		- the number of posts to fetch
-	* @param	array	- the database fields to fetch. Must be named correctly after WordPress-based databases
-	* @return	object	- a Codeigniter database object containing the $fields data, FALSE if there are no records
-	* @access	public
-	*/ 
-	public function getLatestPosts($amount, $fields = array('ID', 'post_title', 'post_date', 'guid')) {		
+
+	public function get($table = 'posts') {
+		return $this->cdb->get($table)->row();
+	}
+
+	public function getAll($table = 'posts') {
+		return $this->cdb->get($table)->result();
+	}
+
+	public function post($fields = self::postFields) {
 		$this->cdb
 		->select($fields)
 		->where('post_type', 'post')
-		->where('post_status', 'publish')
-		->order_by('post_date', 'desc');
-		
-		$sql = $this->cdb->get('posts', $amount);
-		
-		if ($sql->num_rows() > 0) {
-			return $sql;
-		} else {
-			return FALSE;
-		}
+		->where('post_status', 'publish');
+
+		return $this;
 	}
-	
-	/**
- 	* Fetches a single post.
- 	*
- 	* @param	int		- the post to fetch
- 	* @param	array	- the database fields to fetch
- 	* @return	object	- a database object with the post, FALSE otherwise
-	* @access	public
- 	*/
-	public function getPost($id, $fields = array('ID', 'post_title', 'post_content', 'post_date', 'guid', 'post_author')) {
+
+	public function posts($fields = self::postFields) {
+		return $this->post($fields);
+	}
+
+	public function only($amount) {
+		$this->cdb->limit($amount);
+
+		return $this;
+	}
+
+	public function latest($amount, $order = 'id') {
 		$this->cdb
-		->select($fields)
-		->where('ID', $id)
-		->where('post_type', 'post')
-		->where('post_status', 'publish')
-		->limit(1);
-		
-		$sql = $this->cdb->get('posts');
-		
-		if ($sql->num_rows() > 0) {
-			$sql = $sql->row();
-			
-			return $sql;
-		} else {
-			return FALSE;
-		}
+		->limit($amount)
+		->order_by($order, 'desc');
+
+		return $this;
 	}
-	
-	
+
+	public function meta($key, $post_id) {
+		$this->cdb
+		->select('meta_value')
+		->where('meta_key', $key)
+		->where('post_id', $post_id);
+		
+		return $this;
+	}
+
 	/**
  	* Calculates the amount of comments for a single post.
  	*
@@ -90,32 +91,6 @@ class Wp extends CI_Model {
 		->where('comment_post_ID', $id);
 		
 		return $this->cdb->get()->num_rows();
-	}
-
-	/**
- 	* Fetches the meta information of a post.
- 	*
- 	* This method will get the meta information string from a post, matching $key.
- 	* The meta information of a post is a special value that must be set apart from the regular post information.
- 	*
- 	* @param	string	- the meta key that holds the info
- 	* @param	int		- the post to fetch the meta info
- 	* @return	object	- a database object with the meta post.
- 	*/
-	function getPostMeta($key, $post) {
-		$this->cdb
-		->select('meta_value')
-		->where('meta_key', $key)
-		->where('post_id', $post);
-		
-		$sql = $this->cdb->get('postmeta');
-		
-		if ($sql->num_rows() > 0) {
-			$sql = $sql->row();
-			return $sql->meta_value;
-		} else {
-			return FALSE;
-		}
 	}
 	
 	/**
@@ -137,29 +112,6 @@ class Wp extends CI_Model {
 		$sql = $this->cdb->get();
 		
 		if ($sql->num_rows() > 0) {
-			return $sql;
-		} else {
-			return FALSE;
-		}
-	}
-	
-	/**
- 	* Fetches the user information from the database.
- 	*
- 	* @param int		- the user id
- 	* @param array		- the database fields to fetch
- 	* @return object	- a database object with the user information, FALSE otherwise
- 	*/
-	public function getUserData($id, $fields = array('user_login', 'user_nicename', 'user_email', 'display_name', 'user_url')) {
-		$this->cdb
-		->select($fields)
-		->where('ID', $id)
-		->limit(1);
-		
-		$sql = $this->cdb->get('users');
-		
-		if ($sql->num_rows() > 0) {
-			$sql = $sql->row();
 			return $sql;
 		} else {
 			return FALSE;
