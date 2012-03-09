@@ -12,6 +12,7 @@
 * @see		http://mariocuba.net, http://github.com/AeroCross
 */
 class Wp extends CI_Model {	
+
 	// the name of the WordPress database to use
 	private $cdb = WP_DATABASE;
 	private $postFields;
@@ -30,14 +31,34 @@ class Wp extends CI_Model {
 
 	}
 
+	/**
+	* Executes the database query and return only one result.
+	*
+	* @param	string	- the table name excecute the query in
+	* @return	object	- a Codeigniter database object with the result set, FALSE otherwise
+	* @access	public
+	*/
 	public function get($table = 'posts') {
 		return $this->cdb->get($table)->row();
 	}
 
+	/**
+	* Executes the database query and return all the results.
+	*
+	* @param	string	- the table name excecute the query in
+	* @return	object	- a Codeigniter database object with the result set, FALSE otherwise
+	*/
 	public function getAll($table = 'posts') {
 		return $this->cdb->get($table)->result();
 	}
 
+	/**
+	* Selects post information.
+	*
+	* @param	array	- the fields to fetch
+	* @return	object	- the database object
+	* @access	public
+	*/
 	public function post($fields = self::postFields) {
 		$this->cdb
 		->select($fields)
@@ -47,16 +68,39 @@ class Wp extends CI_Model {
 		return $this;
 	}
 
+	/**
+	* Alias method for fetching posts.
+	*
+	* @internal	alias of $this->post()
+	* @param	array	- the fields to fetch
+	* @return	object	- the database object
+	* @access	public
+	*/
 	public function posts($fields = self::postFields) {
 		return $this->post($fields);
 	}
 
+	/**
+	* Limits the results.
+	*
+	* @param	int		- the limit
+	* @return	object	- the database object
+	* @access	public
+	*/
 	public function only($amount) {
 		$this->cdb->limit($amount);
 
 		return $this;
 	}
 
+	/**
+	* Selects the latest information according to the parameter.
+	*
+	* @param	int		- the amount of posts to fetch
+	* @param	string	- the field to order by
+	* @return	object	- the database object
+	* @access	public
+	*/
 	public function latest($amount, $order = 'id') {
 		$this->cdb
 		->limit($amount)
@@ -65,6 +109,13 @@ class Wp extends CI_Model {
 		return $this;
 	}
 
+	/**
+	* Selects meta information from a post.
+	* @param	string	- the meta key
+	* @param	int		- the post id
+	* @return	object	- the database object
+	* @access	public
+	*/
 	public function meta($key, $post_id) {
 		$this->cdb
 		->select('meta_value')
