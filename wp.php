@@ -130,6 +130,71 @@ class Wp extends CI_Model {
 	}
 
 	/**
+	* Gets the taxonomy of a post.
+	*
+	* This is useful for fetching tags, categories, and such.
+	*
+	* @internal	for use with the categories() and tags() methods
+	* @param	int		- the post id to fetch taxonomies from
+	* @return	object	- the database object
+	* @access	public
+	*/
+	public function taxonomy($post_id) {
+		$this->cdb
+		->select('terms.name')
+		->join('term_taxonomy', 'terms.term_id = term_taxonomy.term_id')
+		->join('term_relationships', 'terms.term_id = term_relationships.term_taxonomy_id')
+		->join('posts', 'term_relationships.object_id = posts.id')
+		->where('posts.id', $post_id);
+
+		return $this;
+	}
+
+	/**
+	* Selects categories.
+	*
+	* @internal	for use with the taxonomy() method
+	* @return	object	- the database object
+	* @access	public
+	*/
+	public function category() {
+		$this->cdb->where('term_taxonomy.taxonomy', 'category');
+
+		return $this;
+	}
+
+	/**
+	* Alias of category().
+	*
+	* @access	public
+	*/
+	public function categories() {
+		return $this->category();
+	}
+
+	/**
+	* Selects tags.
+	*
+	* @internal	for use with the taxonomy() method
+	* @return	object	- the database object
+	* @access	public
+	*/
+	public function tag() {
+		$this->cdb->where('term_taxonomy.taxonomy', 'post_tag');
+
+		return $this;
+	}
+
+	/**
+	* Alias of tag().
+	*
+	* @access	public
+	*/
+	public function tags() {
+		return $this->tag();
+	}
+
+	/**
  	* Calculates the amount of comments for a single post.
  	*
  	* @param	int	- the post used to calculate comments
