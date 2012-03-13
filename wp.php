@@ -73,9 +73,8 @@ class Wp extends CI_Model {
 	}
 
 	/**
-	* Alias method for fetching posts.
+	* Alias of post().
 	*
-	* @internal	alias of $this->post()
 	* @param	array	- the fields to fetch
 	* @return	object	- the database object
 	* @access	public
@@ -115,6 +114,7 @@ class Wp extends CI_Model {
 
 	/**
 	* Selects meta information from a post.
+	*
 	* @param	string	- the meta key
 	* @param	int		- the post id
 	* @return	object	- the database object
