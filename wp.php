@@ -212,7 +212,6 @@ class Wp extends CI_Model {
 		return $this->cdb->get()->num_rows();
 	}
 
-	
 	/**
  	* Gets the list of categories.
  	*
