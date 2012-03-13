@@ -203,11 +203,11 @@ class Wp extends CI_Model {
 	*
 	* @TODO:	check if the post doesn't exists so it returns a correct value
  	*/
-	public function getTotalComments($id) {
+	public function getTotalComments($post_id) {
 		$this->cdb
 		->select('comment_ID')
 		->from('comments')
-		->where('comment_post_ID', $id);
+		->where('comment_post_ID', $post_id);
 		
 		return $this->cdb->get()->num_rows();
 	}
