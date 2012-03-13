@@ -59,12 +59,16 @@ class Wp extends CI_Model {
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function post($fields = self::postFields) {
+	public function post($fields = self::postFields, $post_id = NULL) {
 		$this->cdb
 		->select($fields)
 		->where('post_type', 'post')
 		->where('post_status', 'publish');
 
+		if (!empty($post_id)) {
+			$this->cdb->where('id', $post_id);
+		}
+		
 		return $this;
 	}
 
