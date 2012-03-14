@@ -60,19 +60,22 @@ class Wp extends CI_Model {
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function post($fields = self::postFields) {
+	public function post($fields = self::postFields, $post_id = NULL) {
 		$this->cdb
 		->select($fields)
 		->where('post_type', 'post')
 		->where('post_status', 'publish');
 
+		if (!empty($post_id)) {
+			$this->cdb->where('id', $post_id);
+		}
+		
 		return $this;
 	}
 
 	/**
-	* Alias method for fetching posts.
+	* Alias of post().
 	*
-	* @internal	alias of $this->post()
 	* @param	array	- the fields to fetch
 	* @return	object	- the database object
 	* @access	public
@@ -112,6 +115,7 @@ class Wp extends CI_Model {
 
 	/**
 	* Selects meta information from a post.
+	*
 	* @param	string	- the meta key
 	* @param	int		- the post id
 	* @return	object	- the database object
@@ -127,6 +131,71 @@ class Wp extends CI_Model {
 	}
 
 	/**
+	* Gets the taxonomy of a post.
+	*
+	* This is useful for fetching tags, categories, and such.
+	*
+	* @internal	for use with the categories() and tags() methods
+	* @param	int		- the post id to fetch taxonomies from
+	* @return	object	- the database object
+	* @access	public
+	*/
+	public function taxonomy($post_id) {
+		$this->cdb
+		->select('terms.name')
+		->join('term_taxonomy', 'terms.term_id = term_taxonomy.term_id')
+		->join('term_relationships', 'terms.term_id = term_relationships.term_taxonomy_id')
+		->join('posts', 'term_relationships.object_id = posts.id')
+		->where('posts.id', $post_id);
+
+		return $this;
+	}
+
+	/**
+	* Selects categories.
+	*
+	* @internal	for use with the taxonomy() method
+	* @return	object	- the database object
+	* @access	public
+	*/
+	public function category() {
+		$this->cdb->where('term_taxonomy.taxonomy', 'category');
+
+		return $this;
+	}
+
+	/**
+	* Alias of category().
+	*
+	* @access	public
+	*/
+	public function categories() {
+		return $this->category();
+	}
+
+	/**
+	* Selects tags.
+	*
+	* @internal	for use with the taxonomy() method
+	* @return	object	- the database object
+	* @access	public
+	*/
+	public function tag() {
+		$this->cdb->where('term_taxonomy.taxonomy', 'post_tag');
+
+		return $this;
+	}
+
+	/**
+	* Alias of tag().
+	*
+	* @access	public
+	*/
+	public function tags() {
+		return $this->tag();
+	}
+
+	/**
  	* Calculates the amount of comments for a single post.
  	*
  	* @param	int	- the post used to calculate comments
@@ -135,16 +204,15 @@ class Wp extends CI_Model {
 	*
 	* @TODO:	check if the post doesn't exists so it returns a correct value
  	*/
-	public function getTotalComments($id) {
+	public function getTotalComments($post_id) {
 		$this->cdb
 		->select('comment_ID')
 		->from('comments')
-		->where('comment_post_ID', $id);
+		->where('comment_post_ID', $post_id);
 		
 		return $this->cdb->get()->num_rows();
 	}
 
-	
 	/**
  	* Gets the list of categories.
  	*
