@@ -26,7 +26,8 @@ class Wp extends CI_Model {
 				'guid',
 				'post_title',
 				'post_content',
-				'post_excerpt'
+				'post_excerpt',
+				'post_date'
 			);
 
 	}
