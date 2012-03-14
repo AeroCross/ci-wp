@@ -105,7 +105,7 @@ class Wp extends CI_Model {
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function latest($amount, $order = 'id') {
+	public function latest($amount, $order = 'post_date') {
 		$this->cdb
 		->limit($amount)
 		->order_by($order, 'desc');
