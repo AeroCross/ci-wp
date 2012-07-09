@@ -28,8 +28,7 @@ class Wp extends CI_Model {
 				'post_content',
 				'post_excerpt',
 				'post_date'
-			);
-
+			);		
 	}
 
 	/**
