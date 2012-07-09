@@ -95,15 +95,20 @@ class Wp extends CI_Model {
 	}
 
 	/**
-	* Limits the results.
+	* Limits and offsets the results.
 	*
 	* @param	int		- the limit
+	* @param	int		- the offset
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function only($amount) {
-		$this->cdb->limit($amount);
-
+	public function only($amount, $offset = NULL) {
+		if (!empty($offset)) {
+			$this->cdb->limit($amount, $offset);
+		} else {
+			$this->cdb->limit($amount);
+		}
+		
 		return $this;
 	}
 
