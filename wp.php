@@ -60,7 +60,12 @@ class Wp extends CI_Model {
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function post($fields = self::postFields, $post_id = NULL) {
+	public function post($fields = NULL, $post_id = NULL) {
+		// check for class-member default value
+		if ($fields == NULL) {
+			$fields = $this->postFields;
+		}
+
 		$this->cdb
 		->select($fields)
 		->where('post_type', 'post')
@@ -80,7 +85,12 @@ class Wp extends CI_Model {
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function posts($fields = self::postFields) {
+	public function posts($fields = NULL) {
+		// check for class-member default value
+		if ($fields == NULL) {
+			$fields = $this->postFields;
+		}
+
 		return $this->post($fields);
 	}
 
