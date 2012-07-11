@@ -22,7 +22,7 @@ class Wp extends CI_Model {
 		
 		$this->cdb 			= $this->load->database($this->cdb, TRUE);		
 		$this->postFields 	= array(
-				'id', 
+				'ID', 
 				'guid',
 				'post_title',
 				'post_content',
