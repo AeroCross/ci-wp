@@ -1,5 +1,3 @@
-Small and simple Codeigniter model that serves as an interface for Wordpress. It performs basic operations such as getting an users information, getting the latest posts or retrieving comments or categories.
-
 ### Instructions:
 
 Just copy the __wp.php__ file into application/models and load it into your controller:
