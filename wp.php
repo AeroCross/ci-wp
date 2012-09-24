@@ -3,25 +3,21 @@
 /**
 * WordPress model for Codeigniter
 *
-* This class adds interaction to the website and a WordPress database.
 * Contains common operations such as fetch posts, comments, and the modification of such.
 *
-* This library shouldn't have any dependencies other than a correctly formed WordPress database - not even the actual WordPress installation.
-*
 * @author	Mario Cuba <mario@mariocuba.net>
-* @see		http://mariocuba.net, http://github.com/AeroCross
 */
 class Wp extends CI_Model {	
 
 	// the name of the WordPress database to use
-	private $cdb = WP_DATABASE;
-	private $postFields;
+	private $wpdb = WP_DATABASE;
+	private $fields;
 	
 	public function __construct() {
 		parent::__construct();
 		
-		$this->cdb 			= $this->load->database($this->cdb, TRUE);		
-		$this->postFields 	= array(
+		$this->wpdb 		= $this->load->database($this->wpdb, TRUE);		
+		$this->fields 	= array(
 				'ID', 
 				'guid',
 				'post_title',
@@ -39,7 +35,7 @@ class Wp extends CI_Model {
 	* @access	public
 	*/
 	public function get($table = 'posts') {
-		return $this->cdb->get($table)->row();
+		return $this->wpdb->get($table)->row();
 	}
 
 	/**
@@ -49,7 +45,7 @@ class Wp extends CI_Model {
 	* @return	object	- a Codeigniter database object with the result set, FALSE otherwise
 	*/
 	public function getAll($table = 'posts') {
-		return $this->cdb->get($table)->result();
+		return $this->wpdb->get($table)->result();
 	}
 
 	/**
@@ -59,19 +55,19 @@ class Wp extends CI_Model {
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function post($fields = NULL, $post_id = NULL) {
+	public function post($post_id = NULL, $fields = NULL) {
 		// check for class-member default value
 		if ($fields == NULL) {
-			$fields = $this->postFields;
+			$fields = $this->fields;
 		}
 
-		$this->cdb
+		$this->wpdb
 		->select($fields)
 		->where('post_type', 'post')
 		->where('post_status', 'publish');
 
 		if (!empty($post_id)) {
-			$this->cdb->where('id', $post_id);
+			$this->wpdb->where('id', $post_id);
 		}
 		
 		return $this;
@@ -87,10 +83,10 @@ class Wp extends CI_Model {
 	public function posts($fields = NULL) {
 		// check for class-member default value
 		if ($fields == NULL) {
-			$fields = $this->postFields;
+			$fields = $this->fields;
 		}
 
-		return $this->post($fields);
+		return $this->post(NULL, $fields);
 	}
 
 	/**
@@ -103,9 +99,9 @@ class Wp extends CI_Model {
 	*/
 	public function only($amount, $offset = NULL) {
 		if (!empty($offset)) {
-			$this->cdb->limit($amount, $offset);
+			$this->wpdb->limit($amount, $offset);
 		} else {
-			$this->cdb->limit($amount);
+			$this->wpdb->limit($amount);
 		}
 		
 		return $this;
@@ -120,7 +116,7 @@ class Wp extends CI_Model {
 	* @access	public
 	*/
 	public function latest($amount, $order = 'post_date') {
-		$this->cdb
+		$this->wpdb
 		->limit($amount)
 		->order_by($order, 'desc');
 
@@ -136,7 +132,7 @@ class Wp extends CI_Model {
 	* @access	public
 	*/
 	public function meta($key, $post_id) {
-		$this->cdb
+		$this->wpdb
 		->select('meta_value')
 		->where('meta_key', $key)
 		->where('post_id', $post_id);
@@ -155,7 +151,7 @@ class Wp extends CI_Model {
 	* @access	public
 	*/
 	public function taxonomy($post_id) {
-		$this->cdb
+		$this->wpdb
 		->select('terms.name')
 		->join('term_taxonomy', 'terms.term_id = term_taxonomy.term_id')
 		->join('term_relationships', 'terms.term_id = term_relationships.term_taxonomy_id')
@@ -172,8 +168,8 @@ class Wp extends CI_Model {
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function category() {
-		$this->cdb->where('term_taxonomy.taxonomy', 'category');
+	public function category($post_id) {
+		$this->wpdb->taxonomy($post_id)->where('term_taxonomy.taxonomy', 'category');
 
 		return $this;
 	}
@@ -183,8 +179,8 @@ class Wp extends CI_Model {
 	*
 	* @access	public
 	*/
-	public function categories() {
-		return $this->category();
+	public function categories($post_id) {
+		return $this->category($post_id);
 	}
 
 	/**
@@ -194,8 +190,8 @@ class Wp extends CI_Model {
 	* @return	object	- the database object
 	* @access	public
 	*/
-	public function tag() {
-		$this->cdb->where('term_taxonomy.taxonomy', 'post_tag');
+	public function tag($post_id) {
+		$this->wpdb->taxonomy($post_id)->where('term_taxonomy.taxonomy', 'post_tag');
 
 		return $this;
 	}
@@ -205,8 +201,8 @@ class Wp extends CI_Model {
 	*
 	* @access	public
 	*/
-	public function tags() {
-		return $this->tag();
+	public function tags($post_id) {
+		return $this->tag($post_id);
 	}
 
 	/**
@@ -219,12 +215,12 @@ class Wp extends CI_Model {
 	* @TODO:	check if the post doesn't exists so it returns a correct value
  	*/
 	public function getTotalComments($post_id) {
-		$this->cdb
+		$this->wpdb
 		->select('comment_ID')
 		->from('comments')
 		->where('comment_post_ID', $post_id);
 		
-		return $this->cdb->get()->num_rows();
+		return $this->wpdb->get()->num_rows();
 	}
 
 	/**
@@ -233,17 +229,16 @@ class Wp extends CI_Model {
  	* @param	string	- the database column to order by. It takes a "table.column" string (usually from the "terms" table)
  	* @return	object	- a database object with the list of categories, FALSE otherwise
  	*
- 	* @TODO: Code an easier way to order the result set.
  	*/
 	public function getCategories($order = 'terms.term_id') {
-		$this->cdb
+		$this->wpdb
 		->select('name', 'slug')
 		->from('terms')
 		->join('term_taxonomy', 'terms.term_id = term_taxonomy.term_id')
 		->where('taxonomy', 'category')
 		->order_by($order);
 		
-		$sql = $this->cdb->get();
+		$sql = $this->wpdb->get('terms');
 		
 		if ($sql->num_rows() > 0) {
 			return $sql;
